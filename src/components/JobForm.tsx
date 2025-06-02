@@ -1,9 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import PersonalInfoStep from './form-steps/PersonalInfoStep';
 import ContactInfoStep from './form-steps/ContactInfoStep';
 import ExperienceStep from './form-steps/ExperienceStep';
@@ -11,6 +12,7 @@ import EducationStep from './form-steps/EducationStep';
 import SkillsStep from './form-steps/SkillsStep';
 import DocumentsStep from './form-steps/DocumentsStep';
 import ReviewStep from './form-steps/ReviewStep';
+import { getStepValidation } from '@/utils/formValidation';
 
 export interface JobFormData {
   // Personal Information
@@ -73,6 +75,7 @@ export interface JobFormData {
 const JobForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState<JobFormData>({
     firstName: '',
@@ -112,9 +115,10 @@ const JobForm = () => {
   ];
 
   const progress = ((currentStep + 1) / steps.length) * 100;
+  const isCurrentStepValid = getStepValidation(currentStep, formData);
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+    if (currentStep < steps.length - 1 && isCurrentStepValid) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -125,9 +129,62 @@ const JobForm = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
+  const handleSubmit = async () => {
+    if (!isCurrentStepValid) {
+      toast.error("Please fill in all required fields before submitting.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      console.log('Submitting form data:', formData);
+      
+      const { data, error } = await supabase
+        .from('job_applications')
+        .insert({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          date_of_birth: formData.dateOfBirth?.toISOString().split('T')[0] || null,
+          gender: formData.gender || null,
+          nationality: formData.nationality || null,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zip_code: formData.zipCode,
+          linkedin: formData.linkedin || null,
+          portfolio: formData.portfolio || null,
+          experiences: formData.experiences,
+          education: formData.education,
+          technical_skills: formData.technicalSkills,
+          soft_skills: formData.softSkills,
+          languages: formData.languages,
+          desired_position: formData.desiredPosition || null,
+          expected_salary: formData.expectedSalary || null,
+          availability_date: formData.availabilityDate?.toISOString().split('T')[0] || null,
+          work_type: formData.workType || null,
+          resume_filename: formData.resume?.name || null,
+          cover_letter_filename: formData.coverLetter?.name || null
+        })
+        .select();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        toast.error(`Failed to submit application: ${error.message}`);
+        return;
+      }
+
+      console.log('Form submitted successfully:', data);
+      toast.success("Application submitted successfully!");
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateFormData = (updates: Partial<JobFormData>) => {
@@ -218,15 +275,26 @@ const JobForm = () => {
           {currentStep === steps.length - 1 ? (
             <Button
               onClick={handleSubmit}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+              disabled={!isCurrentStepValid || isSubmitting}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-50"
             >
-              <CheckCircle className="w-4 h-4" />
-              Submit Application
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  Submit Application
+                </>
+              )}
             </Button>
           ) : (
             <Button
               onClick={handleNext}
-              className="flex items-center gap-2"
+              disabled={!isCurrentStepValid}
+              className="flex items-center gap-2 disabled:opacity-50"
             >
               Next
               <ArrowRight className="w-4 h-4" />

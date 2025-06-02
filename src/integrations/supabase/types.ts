@@ -9,7 +9,96 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      job_applications: {
+        Row: {
+          address: string
+          availability_date: string | null
+          city: string
+          cover_letter_filename: string | null
+          created_at: string
+          date_of_birth: string | null
+          desired_position: string | null
+          education: Json | null
+          email: string
+          expected_salary: string | null
+          experiences: Json | null
+          first_name: string
+          gender: string | null
+          id: string
+          languages: Json | null
+          last_name: string
+          linkedin: string | null
+          nationality: string | null
+          phone: string
+          portfolio: string | null
+          resume_filename: string | null
+          soft_skills: Json | null
+          state: string
+          technical_skills: Json | null
+          updated_at: string
+          work_type: string | null
+          zip_code: string
+        }
+        Insert: {
+          address: string
+          availability_date?: string | null
+          city: string
+          cover_letter_filename?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          desired_position?: string | null
+          education?: Json | null
+          email: string
+          expected_salary?: string | null
+          experiences?: Json | null
+          first_name: string
+          gender?: string | null
+          id?: string
+          languages?: Json | null
+          last_name: string
+          linkedin?: string | null
+          nationality?: string | null
+          phone: string
+          portfolio?: string | null
+          resume_filename?: string | null
+          soft_skills?: Json | null
+          state: string
+          technical_skills?: Json | null
+          updated_at?: string
+          work_type?: string | null
+          zip_code: string
+        }
+        Update: {
+          address?: string
+          availability_date?: string | null
+          city?: string
+          cover_letter_filename?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          desired_position?: string | null
+          education?: Json | null
+          email?: string
+          expected_salary?: string | null
+          experiences?: Json | null
+          first_name?: string
+          gender?: string | null
+          id?: string
+          languages?: Json | null
+          last_name?: string
+          linkedin?: string | null
+          nationality?: string | null
+          phone?: string
+          portfolio?: string | null
+          resume_filename?: string | null
+          soft_skills?: Json | null
+          state?: string
+          technical_skills?: Json | null
+          updated_at?: string
+          work_type?: string | null
+          zip_code?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
