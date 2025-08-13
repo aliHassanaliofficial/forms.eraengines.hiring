@@ -15,14 +15,11 @@ import ReviewStep from './form-steps/ReviewStep';
 import { getStepValidation } from '@/utils/formValidation';
 
 export interface JobFormData {
-  // Personal Information
   firstName: string;
   lastName: string;
   dateOfBirth: Date | undefined;
   gender: string;
   nationality: string;
-  
-  // Contact Information
   email: string;
   phone: string;
   address: string;
@@ -31,8 +28,6 @@ export interface JobFormData {
   zipCode: string;
   linkedin: string;
   portfolio: string;
-  
-  // Experience
   experiences: Array<{
     id: string;
     company: string;
@@ -42,8 +37,6 @@ export interface JobFormData {
     current: boolean;
     description: string;
   }>;
-  
-  // Education
   education: Array<{
     id: string;
     institution: string;
@@ -52,20 +45,14 @@ export interface JobFormData {
     graduationYear: string;
     gpa: string;
   }>;
-  
-  // Skills
   technicalSkills: string[];
   softSkills: string[];
   languages: Array<{
     language: string;
     proficiency: string;
   }>;
-  
-  // Documents
   resume: File | null;
   coverLetter: File | null;
-  
-  // Job Specific
   desiredPosition: string;
   expectedSalary: string;
   availabilityDate: Date | undefined;
@@ -76,7 +63,7 @@ const JobForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState<JobFormData>({
     firstName: '',
     lastName: '',
@@ -129,6 +116,25 @@ const JobForm = () => {
     }
   };
 
+  const uploadFile = async (file: File, bucket: string, folder: string) => {
+    const filePath = `${folder}/${Date.now()}_${file.name}`;
+
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error("File upload error:", error);
+      toast.error(`Failed to upload file: ${file.name}`);
+      return null;
+    }
+
+    return data.path;
+  };
+
   const handleSubmit = async () => {
     if (!isCurrentStepValid) {
       toast.error("Please fill in all required fields before submitting.");
@@ -136,10 +142,18 @@ const JobForm = () => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
-      console.log('Submitting form data:', formData);
-      
+      let resumePath = null;
+      let coverLetterPath = null;
+
+      if (formData.resume) {
+        resumePath = await uploadFile(formData.resume, "job-documents", "resumes");
+      }
+      if (formData.coverLetter) {
+        coverLetterPath = await uploadFile(formData.coverLetter, "job-documents", "cover_letters");
+      }
+
       const { data, error } = await supabase
         .from('job_applications')
         .insert({
@@ -165,8 +179,8 @@ const JobForm = () => {
           expected_salary: formData.expectedSalary || null,
           availability_date: formData.availabilityDate?.toISOString().split('T')[0] || null,
           work_type: formData.workType || null,
-          resume_filename: formData.resume?.name || null,
-          cover_letter_filename: formData.coverLetter?.name || null
+          resume_filename: resumePath,
+          cover_letter_filename: coverLetterPath
         })
         .select();
 
@@ -176,9 +190,9 @@ const JobForm = () => {
         return;
       }
 
-      console.log('Form submitted successfully:', data);
       toast.success("Application submitted successfully!");
       setIsSubmitted(true);
+
     } catch (error) {
       console.error('Submission error:', error);
       toast.error("An unexpected error occurred. Please try again.");
@@ -193,7 +207,7 @@ const JobForm = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col justify-center items-center p-4">
         <Card className="w-full max-w-md text-center">
           <CardContent className="pt-6">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
@@ -206,6 +220,26 @@ const JobForm = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Footer */}
+        <footer className="bg-white border-t border-gray-200 shadow py-4 mt-8 w-full">
+          <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600">
+            <span>
+              &copy; {new Date().getFullYear()} Era Engines. All rights reserved.
+            </span>
+            <span>
+              Powered by{" "}
+              <a
+                href="https://amxcreations.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                AMX Creations
+              </a>
+            </span>
+          </div>
+        </footer>
       </div>
     );
   }
@@ -213,10 +247,12 @@ const JobForm = () => {
   const CurrentStepComponent = steps[currentStep].component;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#f9f6ff] via-[#eaf3ff] to-[#fef6f0]">
+
+      <div className="max-w-4xl mx-auto flex-1 w-full py-8 px-4">
         {/* Header */}
         <div className="text-center mb-8">
+          <img className='mx-auto mb-4 w-32' src="./spot_logo.png" alt="Era Engines Logo" />
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Job Application</h1>
           <p className="text-gray-600">Complete all steps to submit your application</p>
         </div>
@@ -302,6 +338,26 @@ const JobForm = () => {
           )}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-4">
+        <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600">
+          <span>
+            &copy; {new Date().getFullYear()} Spot. All rights reserved.
+          </span>
+          <span>
+            Powered by{" "}
+            <a
+              href="https://eraengines.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              Era Engines
+            </a>
+          </span>
+        </div>
+      </footer>
     </div>
   );
 };

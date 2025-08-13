@@ -5,7 +5,8 @@ export const validatePersonalInfo = (formData: JobFormData): boolean => {
   return !!(
     formData.firstName.trim() &&
     formData.lastName.trim() &&
-    formData.dateOfBirth
+    formData.dateOfBirth &&
+    formData.gender
   );
 };
 
@@ -16,7 +17,8 @@ export const validateContactInfo = (formData: JobFormData): boolean => {
     formData.address.trim() &&
     formData.city.trim() &&
     formData.state.trim() &&
-    formData.zipCode.trim()
+    formData.zipCode.trim() &&
+    formData.linkedin.trim()
   );
 };
 
@@ -37,6 +39,9 @@ export const validateSkills = (formData: JobFormData): boolean => {
 
 export const validateDocuments = (formData: JobFormData): boolean => {
   // Documents step is optional, so always return true
+  if (!formData.resume && !formData.coverLetter) {
+    return false; // At least one document must be uploaded
+  }
   return true;
 };
 

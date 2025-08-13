@@ -37,13 +37,16 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="desiredPosition">Desired Position *</Label>
-              <Input
-                id="desiredPosition"
-                value={formData.desiredPosition}
-                onChange={(e) => updateFormData({ desiredPosition: e.target.value })}
-                placeholder="Software Engineer, Marketing Manager, etc."
-                required
-              />
+              <Label>Work Type Preference</Label>
+              <Select value={formData.desiredPosition} onValueChange={(value) => updateFormData({ desiredPosition: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select work type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Designer">Designer</SelectItem>
+                  <SelectItem value="Developer">Developer</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <div className="space-y-2">

@@ -88,17 +88,18 @@ const ContactInfoStep: React.FC<ContactInfoStepProps> = ({ formData, updateFormD
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="linkedin">LinkedIn Profile</Label>
+          <Label htmlFor="linkedin">LinkedIn Profile *</Label>
           <Input
             id="linkedin"
             value={formData.linkedin}
             onChange={(e) => updateFormData({ linkedin: e.target.value })}
             placeholder="https://linkedin.com/in/yourprofile"
+            required
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="portfolio">Portfolio/Website</Label>
+          <Label htmlFor="portfolio">Portfolio/Website (optional)</Label>
           <Input
             id="portfolio"
             value={formData.portfolio}

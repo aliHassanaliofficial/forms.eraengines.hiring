@@ -73,16 +73,14 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ formData, updateFor
         </div>
 
         <div className="space-y-2">
-          <Label>Gender</Label>
-          <Select value={formData.gender} onValueChange={(value) => updateFormData({ gender: value })}>
+          <Label>Gender *</Label>
+          <Select value={formData.gender} onValueChange={(value) => updateFormData({ gender: value })} required>
             <SelectTrigger>
               <SelectValue placeholder="Select gender" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="male">Male</SelectItem>
               <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-              <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -92,9 +90,10 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ formData, updateFor
         <Label htmlFor="nationality">Nationality</Label>
         <Input
           id="nationality"
-          value={formData.nationality}
+          value={"Egyptian"}
           onChange={(e) => updateFormData({ nationality: e.target.value })}
           placeholder="Enter your nationality"
+          disabled
         />
       </div>
     </div>
