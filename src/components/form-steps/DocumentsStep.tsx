@@ -37,6 +37,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="desiredPosition">Desired Position *</Label>
+              <br />
               <Label>Work Type Preference</Label>
               <Select value={formData.desiredPosition} onValueChange={(value) => updateFormData({ desiredPosition: value })}>
                 <SelectTrigger>
@@ -48,14 +49,14 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="expectedSalary">Expected Salary</Label>
               <Input
                 id="expectedSalary"
                 value={formData.expectedSalary}
                 onChange={(e) => updateFormData({ expectedSalary: e.target.value })}
-                placeholder="$60,000 - $80,000"
+                placeholder="EGP"
               />
             </div>
           </div>

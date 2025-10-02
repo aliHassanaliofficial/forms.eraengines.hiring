@@ -21,7 +21,7 @@ const ContactInfoStep: React.FC<ContactInfoStepProps> = ({ formData, updateFormD
             type="email"
             value={formData.email}
             onChange={(e) => updateFormData({ email: e.target.value })}
-            placeholder="your.email@example.com"
+            placeholder="your.email@domain.com"
             required
           />
         </div>
@@ -33,7 +33,7 @@ const ContactInfoStep: React.FC<ContactInfoStepProps> = ({ formData, updateFormD
             type="tel"
             value={formData.phone}
             onChange={(e) => updateFormData({ phone: e.target.value })}
-            placeholder="+1 (555) 123-4567"
+            placeholder="+20 122 345 6789"
             required
           />
         </div>
@@ -95,6 +95,7 @@ const ContactInfoStep: React.FC<ContactInfoStepProps> = ({ formData, updateFormD
             onChange={(e) => updateFormData({ linkedin: e.target.value })}
             placeholder="https://linkedin.com/in/yourprofile"
             required
+            type='url'
           />
         </div>
         

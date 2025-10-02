@@ -116,14 +116,25 @@ const JobForm = () => {
     }
   };
 
+  const sanitizeFileName = (fileName: string) => {
+    return fileName
+      .toLowerCase()                  // make everything lowercase
+      .replace(/\s+/g, "_")           // replace spaces with underscores
+      .replace(/[()[\]{}]/g, "")      // remove brackets/parentheses
+      .replace(/[^a-z0-9._-]/g, "")   // allow only safe chars
+      .replace(/_+/g, "_")            // collapse multiple underscores
+      .replace(/^_+|_+$/g, "");       // trim underscores from start/end
+  };
+
   const uploadFile = async (file: File, bucket: string, folder: string) => {
-    const filePath = `${folder}/${Date.now()}_${file.name}`;
+    const safeFileName = sanitizeFileName(file.name);
+    const filePath = `${folder}/${Date.now()}_${safeFileName}`;
 
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false
+        cacheControl: "3600",
+        upsert: false,
       });
 
     if (error) {
@@ -168,7 +179,7 @@ const JobForm = () => {
           city: formData.city,
           state: formData.state,
           zip_code: formData.zipCode,
-          linkedin: formData.linkedin || null,
+          linkedin: formData.linkedin,
           portfolio: formData.portfolio || null,
           experiences: formData.experiences,
           education: formData.education,
@@ -183,6 +194,13 @@ const JobForm = () => {
           cover_letter_filename: coverLetterPath
         })
         .select();
+
+      const isValidLinkedinUrl = /^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(formData.linkedin);
+      if (formData.linkedin && !isValidLinkedinUrl) {
+        toast.error("Please enter a valid URL for your LinkedIn profile.");
+        setIsSubmitting(false);
+        return;
+      }
 
       if (error) {
         console.error('Supabase error:', error);
@@ -199,6 +217,7 @@ const JobForm = () => {
     } finally {
       setIsSubmitting(false);
     }
+
   };
 
   const updateFormData = (updates: Partial<JobFormData>) => {
@@ -222,7 +241,7 @@ const JobForm = () => {
         </Card>
 
         {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 shadow py-4 mt-8 w-full">
+        <footer className="absolute bottom-0 w-full py-4">
           <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600">
             <span>
               &copy; {new Date().getFullYear()} Era Engines. All rights reserved.
@@ -230,12 +249,12 @@ const JobForm = () => {
             <span>
               Powered by{" "}
               <a
-                href="https://amxcreations.com"
+                href="https://eraengines.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                AMX Creations
+                Era Engines
               </a>
             </span>
           </div>
@@ -252,7 +271,7 @@ const JobForm = () => {
       <div className="max-w-4xl mx-auto flex-1 w-full py-8 px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <img className='mx-auto mb-4 w-32' src="./spot_logo.png" alt="Era Engines Logo" />
+          <img className='mx-auto mb-4 w-28' src="./logo.png" alt="Logo" />
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Job Application</h1>
           <p className="text-gray-600">Complete all steps to submit your application</p>
         </div>
@@ -263,9 +282,8 @@ const JobForm = () => {
             <div className="flex justify-between items-center mb-4">
               {steps.map((step, index) => (
                 <div key={index} className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    index <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${index <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                    }`}>
                     {index + 1}
                   </div>
                   <span className="text-xs mt-1 hidden sm:block">{step.title}</span>
@@ -289,8 +307,8 @@ const JobForm = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <CurrentStepComponent 
-              formData={formData} 
+            <CurrentStepComponent
+              formData={formData}
               updateFormData={updateFormData}
             />
           </CardContent>
@@ -307,7 +325,7 @@ const JobForm = () => {
             <ArrowLeft className="w-4 h-4" />
             Previous
           </Button>
-          
+
           {currentStep === steps.length - 1 ? (
             <Button
               onClick={handleSubmit}
@@ -340,8 +358,8 @@ const JobForm = () => {
       </div>
 
       {/* Footer */}
-      <footer className="py-4">
-        <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600">
+      <footer className="w-full relative left-0 bottom-[10px] flex align-center space-evenly flex-row">
+        <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600 w-1/2">
           <span>
             &copy; {new Date().getFullYear()} Spot. All rights reserved.
           </span>
