@@ -13,6 +13,7 @@ import SkillsStep from './form-steps/SkillsStep';
 import DocumentsStep from './form-steps/DocumentsStep';
 import ReviewStep from './form-steps/ReviewStep';
 import { getStepValidation } from '@/utils/formValidation';
+import companyData from '@/ReferCompany.ts';
 
 export interface JobFormData {
   firstName: string;
@@ -244,7 +245,7 @@ const JobForm = () => {
         <footer className="absolute bottom-0 w-full py-4">
           <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600">
             <span>
-              &copy; {new Date().getFullYear()} Era Engines. All rights reserved.
+              &copy; {new Date().getFullYear()} {companyData.companyName}. All rights reserved.
             </span>
             <span>
               Powered by{" "}
@@ -361,7 +362,7 @@ const JobForm = () => {
       <footer className="w-full relative left-0 bottom-[10px] flex align-center space-evenly flex-row">
         <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600 w-1/2">
           <span>
-            &copy; {new Date().getFullYear()} Spot. All rights reserved.
+            &copy; {new Date().getFullYear()} {companyData.companyName}. All rights reserved.
           </span>
           <span>
             Powered by{" "}
