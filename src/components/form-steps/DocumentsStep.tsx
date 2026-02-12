@@ -44,8 +44,20 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
                   <SelectValue placeholder="Select work type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Designer">Designer</SelectItem>
-                  <SelectItem value="Developer">Developer</SelectItem>
+                  ----- MERN Stack -----
+                  <SelectItem value="mern-developer">MERN Stack Developer (3 Positions)</SelectItem>
+                  <SelectItem value="mern-designer">MERN Designer (2 Positions)</SelectItem>
+                  <SelectItem value="mern-project-manager">MERN Project Manager (1 Positions)</SelectItem>
+                  ----- Web Developers -----
+                  <SelectItem value="frontend-developer">Frontend Developer (2 Positions)</SelectItem>
+                  <SelectItem value="backend-developer">Backend Developer (2 Positions)</SelectItem>
+                  <SelectItem value="fullstack-developer">Fullstack Developer (2 Positions)</SelectItem>
+                  ----- Databases Developers -----
+                  <SelectItem value="database-designer">Database Designer (1 Position)</SelectItem>
+                  <SelectItem value="data-analyst">Data Analyst (1 Position)</SelectItem>
+                  ----- Databases Developers -----
+                  <SelectItem value="database-administrator">Database Designer (1 Position)</SelectItem>
+                  <SelectItem value="data-analyst">Data Analyst (1 Position)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
