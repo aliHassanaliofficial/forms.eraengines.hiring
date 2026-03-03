@@ -13,7 +13,8 @@ import SkillsStep from './form-steps/SkillsStep';
 import DocumentsStep from './form-steps/DocumentsStep';
 import ReviewStep from './form-steps/ReviewStep';
 import { getStepValidation } from '@/utils/formValidation';
-import companyData from '@/ReferCompany.ts';
+import { useParams } from 'react-router-dom';
+import { getFormConfig, defaultFormConfig } from '@/config/forms';
 
 export interface JobFormData {
   firstName: string;
@@ -58,9 +59,18 @@ export interface JobFormData {
   expectedSalary: string;
   availabilityDate: Date | undefined;
   workType: string;
+  formId: string;
 }
 
 const JobForm = () => {
+  const { formId } = useParams<{ formId: string }>();
+  const formConfig = formId ? getFormConfig(formId) || defaultFormConfig : defaultFormConfig;
+
+  // Update page title
+  React.useEffect(() => {
+    document.title = `${formConfig.companyName} - Hiring`;
+  }, [formConfig]);
+
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +80,7 @@ const JobForm = () => {
     lastName: '',
     dateOfBirth: undefined,
     gender: '',
-    nationality: '',
+    nationality: 'Egyptian', // Default as per existing code
     email: '',
     phone: '',
     address: '',
@@ -86,10 +96,11 @@ const JobForm = () => {
     languages: [],
     resume: null,
     coverLetter: null,
-    desiredPosition: '',
+    desiredPosition: formConfig.title,
     expectedSalary: '',
     availabilityDate: undefined,
-    workType: ''
+    workType: '',
+    formId: formId || 'default'
   });
 
   const steps = [
@@ -192,7 +203,9 @@ const JobForm = () => {
           availability_date: formData.availabilityDate?.toISOString().split('T')[0] || null,
           work_type: formData.workType || null,
           resume_filename: resumePath,
-          cover_letter_filename: coverLetterPath
+          cover_letter_filename: coverLetterPath,
+          // Note: We might want to add form_id to the database schema later
+          // metadata: { form_id: formConfig.id } 
         })
         .select();
 
@@ -245,7 +258,7 @@ const JobForm = () => {
         <footer className="absolute bottom-0 w-full py-4">
           <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600">
             <span>
-              &copy; {new Date().getFullYear()} {companyData.companyName}. All rights reserved.
+              &copy; {new Date().getFullYear()} {formConfig.companyName}. All rights reserved.
             </span>
             <span>
               Powered by{" "}
@@ -272,9 +285,10 @@ const JobForm = () => {
       <div className="max-w-4xl mx-auto flex-1 w-full py-8 px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <img className='mx-auto mb-4 w-28' src="./logo.png" alt="Logo" />
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Job Application</h1>
-          <p className="text-gray-600">Complete all steps to submit your application</p>
+          <img className='mx-auto mb-4 w-28' src={formConfig.companyLogo} alt="Logo" />
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">{formConfig.title}</h1>
+          <p className="text-gray-600"></p>
+          <p className="text-sm text-gray-500 mt-2">Complete all steps to submit your application</p>
         </div>
 
         {/* Progress Bar */}
@@ -362,7 +376,7 @@ const JobForm = () => {
       <footer className="w-full relative left-0 bottom-[10px] flex align-center space-evenly flex-row">
         <div className="max-w-4xl mx-auto flex justify-between items-center px-4 text-sm text-gray-600 w-1/2">
           <span>
-            &copy; {new Date().getFullYear()} {companyData.companyName}. All rights reserved.
+            &copy; {new Date().getFullYear()} {formConfig.companyName}. All rights reserved.
           </span>
           <span>
             Powered by{" "}

@@ -1,8 +1,8 @@
 
-import JobForm from "@/components/JobForm";
+import NotFound from "./NotFound";
 
 const Index = () => {
-  return <JobForm />;
+  return <NotFound />;
 };
 
 export default Index;

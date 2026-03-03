@@ -11,6 +11,7 @@ import { CalendarIcon, Upload, FileText, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from "@/lib/utils";
 import { JobFormData } from '../JobForm';
+import { getFormConfig, defaultFormConfig } from '@/config/forms';
 
 interface DocumentsStepProps {
   formData: JobFormData;
@@ -18,6 +19,7 @@ interface DocumentsStepProps {
 }
 
 const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData }) => {
+  const formConfig = getFormConfig(formData.formId) || defaultFormConfig;
   const handleFileUpload = (field: 'resume' | 'coverLetter', file: File | null) => {
     updateFormData({ [field]: file });
   };
@@ -44,20 +46,11 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
                   <SelectValue placeholder="Select work type" />
                 </SelectTrigger>
                 <SelectContent>
-                  ----- MERN Stack -----
-                  <SelectItem value="mern-developer">MERN Stack Developer (3 Positions)</SelectItem>
-                  <SelectItem value="mern-designer">MERN Designer (2 Positions)</SelectItem>
-                  <SelectItem value="mern-project-manager">MERN Project Manager (1 Positions)</SelectItem>
-                  ----- Web Developers -----
-                  <SelectItem value="frontend-developer">Frontend Developer (2 Positions)</SelectItem>
-                  <SelectItem value="backend-developer">Backend Developer (2 Positions)</SelectItem>
-                  <SelectItem value="fullstack-developer">Fullstack Developer (2 Positions)</SelectItem>
-                  ----- Databases Developers -----
-                  <SelectItem value="database-designer">Database Designer (1 Position)</SelectItem>
-                  <SelectItem value="data-analyst">Data Analyst (1 Position)</SelectItem>
-                  ----- Databases Developers -----
-                  <SelectItem value="database-administrator">Database Designer (1 Position)</SelectItem>
-                  <SelectItem value="data-analyst">Data Analyst (1 Position)</SelectItem>
+                  {formConfig.positions.map((position) => (
+                    <SelectItem key={position.value} value={position.value}>
+                      {position.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -65,8 +58,9 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
             <div className="space-y-2">
               <Label htmlFor="expectedSalary">Expected Salary</Label>
               <Input
+                disabled
                 id="expectedSalary"
-                value={formData.expectedSalary}
+                value={formConfig.salary.find((salary) => salary.value === formData.expectedSalary)?.label}
                 onChange={(e) => updateFormData({ expectedSalary: e.target.value })}
                 placeholder="EGP"
               />
@@ -109,11 +103,11 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
                   <SelectValue placeholder="Select work type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="full-time">Full-time</SelectItem>
-                  <SelectItem value="part-time">Part-time</SelectItem>
-                  <SelectItem value="contract">Contract</SelectItem>
-                  <SelectItem value="remote">Remote</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                    {formConfig.workType.map((workType) => (
+                        <SelectItem key={workType.value} value={workType.value}>
+                            {workType.label}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>

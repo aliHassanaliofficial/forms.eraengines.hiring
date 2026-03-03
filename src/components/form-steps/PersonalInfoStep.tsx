@@ -14,7 +14,7 @@ import { JobFormData } from '../JobForm';
 interface PersonalInfoStepProps {
   formData: JobFormData;
   updateFormData: (updates: Partial<JobFormData>) => void;
-}
+} 
 
 const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ formData, updateFormData }) => {
   return (
@@ -30,7 +30,7 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ formData, updateFor
             required
           />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="lastName">Last Name *</Label>
           <Input
@@ -87,13 +87,14 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ formData, updateFor
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="nationality">Nationality</Label>
+        <Label htmlFor="nationality">Nationality *</Label>
         <Input
+          disabled
           id="nationality"
-          value={"Egyptian"}
+          value={formData.nationality}
           onChange={(e) => updateFormData({ nationality: e.target.value })}
           placeholder="Enter your nationality"
-          disabled
+          required
         />
       </div>
     </div>
