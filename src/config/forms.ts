@@ -20,13 +20,13 @@ export interface FormConfig {
 }
 
 export const formsConfig: Record<string, FormConfig> = {
-    "monumbrellla-jobs": {
+    "monumbrella-interns": {
         id: "monumbrellla-jobs",
         title: "Monumbrellla Technologies",
         companyName: "Monumbrellla Technologies",
         companyWebsite: "https://monumbrellla.com",
         contactEmail: "jobs@monumbrellla.com",
-        companyLogo: "/logo.png",
+        companyLogo: "/monumbrellaLogo.png",
         positions: [
             { value: "django-developer", label: "(Intern) DJango Developer - beginner/intermediate - (2 Positions)" },
             { value: "django-api-developer", label: "(Intern) DJango API Developer - beginner/intermediate - (1 Position)" },
@@ -45,14 +45,4 @@ export const getFormConfig = (id: string): FormConfig | undefined => {
     return formsConfig[id];
 };
 
-export const defaultFormConfig: FormConfig = {
-    id: "default",
-    title: "General Application",
-    companyName: "Era Engines",
-    companyWebsite: "https://eraengines.vercel.app/",
-    contactEmail: "contact@eraengines.com",
-    companyLogo: "./logo.png",
-    positions: [],
-    workType: [],   
-    salary: [],
-};
+export const defaultFormConfig: undefined = undefined;
