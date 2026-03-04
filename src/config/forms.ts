@@ -28,8 +28,14 @@ export const formsConfig: Record<string, FormConfig> = {
         contactEmail: "jobs@monumbrellla.com",
         companyLogo: "/monumbrellaLogo.png",
         positions: [
-            { value: "django-developer", label: "(Intern) DJango Developer - beginner/intermediate - (2 Positions)" },
-            { value: "django-api-developer", label: "(Intern) DJango API Developer - beginner/intermediate - (1 Position)" },
+            { value: "django-developer", label: "(Intern) DJango Developer - beginner/intermediate" },
+            { value: "django-api-developer", label: "(Intern) DJango API Developer - beginner/intermediate" },
+            { value: "data-analyst", label: "(Intern) Data Analyst - beginner/intermediate" },
+            { value: "data-scientist", label: "(Intern) Data Scientist - beginner/intermediate" },
+            { value: "software-architect", label: "(Intern) Software Architect - beginner/intermediate" },
+            { value: "software-engineer", label: "(Intern) Software Engineer - beginner/intermediate" },
+            { value: "software-sales", label: "(Intern) Software Sales - beginner/intermediate" },
+            { value: "software-sales-manager", label: "(Intern) Software Sales Manager - beginner/intermediate" },
         ],
         workType: [
             { value: "remote", label: "Remote" },
