@@ -59,6 +59,7 @@ export interface JobFormData {
   expectedSalary: string;
   availabilityDate: Date | undefined;
   workType: string;
+  otherPosition: string;
   formId: string;
 }
 
@@ -100,6 +101,7 @@ const JobForm = () => {
     expectedSalary: '',
     availabilityDate: undefined,
     workType: '',
+    otherPosition: '',
     formId: formId || 'default'
   });
 
@@ -198,7 +200,7 @@ const JobForm = () => {
           technical_skills: formData.technicalSkills,
           soft_skills: formData.softSkills,
           languages: formData.languages,
-          desired_position: formData.desiredPosition || null,
+          desired_position: formData.desiredPosition === 'other' ? formData.otherPosition : (formData.desiredPosition || null),
           expected_salary: formData.expectedSalary || null,
           availability_date: formData.availabilityDate?.toISOString().split('T')[0] || null,
           work_type: formData.workType || null,

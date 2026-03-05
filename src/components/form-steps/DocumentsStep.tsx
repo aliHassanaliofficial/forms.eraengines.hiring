@@ -110,6 +110,16 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
                     ))}
                 </SelectContent>
               </Select>
+              {formData.desiredPosition === "other" && (
+                <div className="space-y-2">
+                  <Label>Other Position</Label>
+                  <Input
+                    value={formData.otherPosition}
+                    onChange={(e) => updateFormData({ otherPosition: e.target.value })}
+                    placeholder="Enter your desired position"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

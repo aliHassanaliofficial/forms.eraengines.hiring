@@ -8,6 +8,7 @@ export interface FormConfig {
     positions: {
         value: string;
         label: string;
+        hasOther?: boolean;
     }[];
     workType: {
         value: string;
@@ -36,6 +37,7 @@ export const formsConfig: Record<string, FormConfig> = {
             { value: "software-engineer", label: "(Intern) Software Engineer - beginner/intermediate" },
             { value: "software-sales", label: "(Intern) Software Sales - beginner/intermediate" },
             { value: "software-sales-manager", label: "(Intern) Software Sales Manager - beginner/intermediate" },
+            { value: "other", label: "Other (For Future Available Positions)", hasOther: true },
         ],
         workType: [
             { value: "remote", label: "Remote (Cairo, Alexandria)" },
