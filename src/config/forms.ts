@@ -38,8 +38,8 @@ export const formsConfig: Record<string, FormConfig> = {
             { value: "software-sales-manager", label: "(Intern) Software Sales Manager - beginner/intermediate" },
         ],
         workType: [
-            { value: "remote", label: "Remote" },
-            { value: "hybrid", label: "Hybrid" },
+            { value: "remote", label: "Remote (Cairo, Alexandria)" },
+            { value: "hybrid", label: "Hybrid (Alexandria)" },
         ],
         salary: [
             { value: "disabled", label: "Disabled" }
