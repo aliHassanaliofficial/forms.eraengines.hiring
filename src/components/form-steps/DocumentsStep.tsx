@@ -69,7 +69,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Availability Date</Label>
+              <Label>Availability Date *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -84,7 +84,7 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
+                  <Calendar required
                     mode="single"
                     selected={formData.availabilityDate}
                     onSelect={(date) => updateFormData({ availabilityDate: date })}
@@ -112,8 +112,8 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
               </Select>
               {formData.desiredPosition === "other" && (
                 <div className="space-y-2">
-                  <Label>Other Position</Label>
-                  <Input
+                  <Label>Other Position *</Label>
+                  <Input required
                     value={formData.otherPosition}
                     onChange={(e) => updateFormData({ otherPosition: e.target.value })}
                     placeholder="Enter your desired position"
