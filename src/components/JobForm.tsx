@@ -13,7 +13,7 @@ import SkillsStep from './form-steps/SkillsStep';
 import DocumentsStep from './form-steps/DocumentsStep';
 import ReviewStep from './form-steps/ReviewStep';
 import { getStepValidation } from '@/utils/formValidation';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getFormConfig, defaultFormConfig } from '@/config/forms';
 
 export interface JobFormData {
@@ -65,6 +65,7 @@ export interface JobFormData {
 
 const JobForm = () => {
   const { formId } = useParams<{ formId: string }>();
+  const navigate = useNavigate();
   const formConfig = formId ? getFormConfig(formId) || defaultFormConfig : defaultFormConfig;
 
   // Update page title
@@ -75,6 +76,7 @@ const JobForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingApplication, setIsCheckingApplication] = useState(false);
 
   const [formData, setFormData] = useState<JobFormData>({
     firstName: '',
@@ -118,9 +120,45 @@ const JobForm = () => {
   const progress = ((currentStep + 1) / steps.length) * 100;
   const isCurrentStepValid = getStepValidation(currentStep, formData);
 
-  const handleNext = () => {
+  const checkForExistingApplication = async (email: string): Promise<boolean | null> => {
+    const escapedEmail = email.trim().replace(/[\\%_]/g, '\\$&');
+    const { data, error } = await supabase
+      .from('job_applications')
+      .select('id')
+      .ilike('email', escapedEmail)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Failed to check for an existing application:', error);
+      toast.error('Unable to check for a previous application. Please try again.');
+      return null;
+    }
+
+    return data !== null;
+  };
+
+  const goToAlreadyAppliedPage = () => {
+    navigate(`/company/${encodeURIComponent(formId ?? 'default')}/application/already-applied`, { replace: true });
+  };
+
+  const handleNext = async () => {
     if (currentStep < steps.length - 1 && isCurrentStepValid) {
-      setCurrentStep(currentStep + 1);
+      if (currentStep === 1) {
+        setIsCheckingApplication(true);
+        try {
+          const alreadyApplied = await checkForExistingApplication(formData.email);
+          if (alreadyApplied === null) return;
+          if (alreadyApplied) {
+            goToAlreadyAppliedPage();
+            return;
+          }
+        } finally {
+          setIsCheckingApplication(false);
+        }
+      }
+
+      setCurrentStep((step) => step + 1);
     }
   };
 
@@ -166,9 +204,22 @@ const JobForm = () => {
       return;
     }
 
+    const isValidLinkedinUrl = /^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(formData.linkedin);
+    if (formData.linkedin && !isValidLinkedinUrl) {
+      toast.error("Please enter a valid URL for your LinkedIn profile.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      const alreadyApplied = await checkForExistingApplication(formData.email);
+      if (alreadyApplied === null) return;
+      if (alreadyApplied) {
+        goToAlreadyAppliedPage();
+        return;
+      }
+
       let resumePath = null;
       let coverLetterPath = null;
 
@@ -179,7 +230,7 @@ const JobForm = () => {
         coverLetterPath = await uploadFile(formData.coverLetter, "job-documents", "cover_letters");
       }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('job_applications')
         .insert({
           first_name: formData.firstName,
@@ -206,19 +257,13 @@ const JobForm = () => {
           work_type: formData.workType || null,
           resume_filename: resumePath,
           cover_letter_filename: coverLetterPath,
-          // Note: We might want to add form_id to the database schema later
-          // metadata: { form_id: formConfig.id } 
-        })
-        .select();
-
-      const isValidLinkedinUrl = /^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(formData.linkedin);
-      if (formData.linkedin && !isValidLinkedinUrl) {
-        toast.error("Please enter a valid URL for your LinkedIn profile.");
-        setIsSubmitting(false);
-        return;
-      }
+        });
 
       if (error) {
+        if (error.code === '23505' && error.message.toLowerCase().includes('already applied')) {
+          goToAlreadyAppliedPage();
+          return;
+        }
         console.error('Supabase error:', error);
         toast.error(`Failed to submit application: ${error.message}`);
         return;
@@ -250,9 +295,6 @@ const JobForm = () => {
             <p className="text-gray-600 mb-4">
               Thank you for your application. We'll review it and get back to you soon.
             </p>
-            <Button onClick={() => window.location.reload()} className="w-full">
-              Submit Another Application
-            </Button>
           </CardContent>
         </Card>
 
@@ -364,11 +406,17 @@ const JobForm = () => {
           ) : (
             <Button
               onClick={handleNext}
-              disabled={!isCurrentStepValid}
+              disabled={!isCurrentStepValid || isCheckingApplication}
               className="flex items-center gap-2 disabled:opacity-50"
             >
-              Next
-              <ArrowRight className="w-4 h-4" />
+              {isCheckingApplication ? (
+                "Checking..."
+              ) : (
+                <>
+                  Next
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </Button>
           )}
         </div>

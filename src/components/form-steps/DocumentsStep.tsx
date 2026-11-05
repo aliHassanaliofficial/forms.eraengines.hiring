@@ -56,13 +56,13 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="expectedSalary">Expected Salary</Label>
+              <Label htmlFor="expectedSalary">Expected Salary *</Label>
               <Input
-                disabled
                 id="expectedSalary"
                 value={formConfig.salary.find((salary) => salary.value === formData.expectedSalary)?.label}
                 onChange={(e) => updateFormData({ expectedSalary: e.target.value })}
                 placeholder="EGP"
+                required
               />
             </div>
           </div>
@@ -97,8 +97,8 @@ const DocumentsStep: React.FC<DocumentsStepProps> = ({ formData, updateFormData 
             </div>
 
             <div className="space-y-2">
-              <Label>Work Type Preference</Label>
-              <Select value={formData.workType} onValueChange={(value) => updateFormData({ workType: value })}>
+              <Label>Work Type Preference *</Label>
+              <Select required value={formData.workType} onValueChange={(value) => updateFormData({ workType: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select work type" />
                 </SelectTrigger>
